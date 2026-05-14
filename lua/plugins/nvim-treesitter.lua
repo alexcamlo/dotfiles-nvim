@@ -1,57 +1,53 @@
+local ensure_installed = {
+  "json",
+  "javascript",
+  "typescript",
+  "tsx",
+  "yaml",
+  "html",
+  "css",
+  "graphql",
+  "bash",
+  "lua",
+  "vim",
+  "dockerfile",
+  "gitignore",
+}
+
 return {
   {
     "nvim-treesitter/nvim-treesitter",
-    event = { "BufReadPre", "BufNewFile" },
-    build = ":TSUpdate",
+    branch = "main",
+    lazy = false,
+    build = function()
+      local treesitter = require("nvim-treesitter")
+      treesitter.setup()
+      treesitter.install(ensure_installed):wait(300000)
+      vim.cmd.TSUpdate()
+    end,
     dependencies = {
-      "nvim-treesitter/nvim-treesitter-textobjects",
       "windwp/nvim-ts-autotag",
       "JoosepAlviste/nvim-ts-context-commentstring",
     },
     config = function()
-      -- import nvim-treesitter plugin
-      local treesitter = require("nvim-treesitter.configs")
+      require("nvim-treesitter").setup()
 
-      -- configure treesitter
-      treesitter.setup({ -- enable syntax highlighting
-        -- ensure these language parsers are installed
-        ensure_installed = {
-          "json",
-          "javascript",
-          "typescript",
-          "tsx",
-          "yaml",
-          "html",
-          "comment",
-          "css",
-          "graphql",
-          "bash",
-          "lua",
-          "vim",
-          "dockerfile",
-          "gitignore",
-        },
-        sync_install = false,
-        auto_install = true,
-        autopairs = { enable = true },
-        highlight = {
-          enable = true,
-          additional_vim_regex_highlighting = true,
-        },
-        -- enable indentation
-        indent = { enable = true, disable = { "yaml" } },
-        incremental_selection = {
-          enable = true,
-          keymaps = {
-            init_selection = "<C-space>",
-            node_incremental = "<C-space>",
-            scope_incremental = false,
-            node_decremental = "<bs>",
-          },
-        },
+      vim.api.nvim_create_autocmd("FileType", {
+        group = vim.api.nvim_create_augroup("UserTreesitter", { clear = true }),
+        callback = function(args)
+          local filetype = vim.bo[args.buf].filetype
+          if filetype == "yaml" then
+            pcall(vim.treesitter.start, args.buf)
+            return
+          end
+
+          pcall(vim.treesitter.start, args.buf)
+          vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end,
       })
 
-      -- enable nvim-ts-context-commentstring plugin for commenting tsx and jsx
+      require("nvim-ts-autotag").setup()
+
       require("ts_context_commentstring").setup({
         enable_autocmd = false,
       })

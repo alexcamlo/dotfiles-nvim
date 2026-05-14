@@ -103,13 +103,3 @@ vim.api.nvim_create_autocmd({ "FileChangedShellPost" }, {
   pattern = "*",
   command = "echohl WarningMsg | echo 'File changed on disk. Buffer reloaded.' | echohl None",
 })
-
--- This is global settings for diagnostics
-vim.o.updatetime = 250
-vim.diagnostic.config({
-  virtual_text = false,
-  signs = true,
-  underline = true,
-  update_in_insert = false,
-  severity_sort = false,
-})

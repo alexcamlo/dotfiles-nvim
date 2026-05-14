@@ -1,34 +1,19 @@
--- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
--- This config is DEPRECATED.
--- Use the configs in `lsp/` instead (requires Nvim 0.11).
---
--- ALL configs in `lua/lspconfig/configs/` will be DELETED.
--- They exist only to support Nvim 0.10 or older.
--- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-local util = require("lspconfig.util")
-
+---@type vim.lsp.Config
 return {
-  default_config = {
-    cmd = { "astro-ls", "--stdio" },
-    filetypes = { "astro" },
-    root_dir = util.root_pattern("package.json", "tsconfig.json", "jsconfig.json", ".git"),
-    init_options = {
-      typescript = {},
-    },
-    on_new_config = function(new_config, new_root_dir)
-      if vim.tbl_get(new_config.init_options, "typescript") and not new_config.init_options.typescript.tsdk then
-        new_config.init_options.typescript.tsdk = util.get_typescript_server_path(new_root_dir)
-      end
-    end,
+  cmd = { "astro-ls", "--stdio" },
+  filetypes = { "astro" },
+  root_markers = { "package.json", "tsconfig.json", "jsconfig.json", ".git" },
+  init_options = {
+    typescript = {},
   },
-  docs = {
-    description = [[
-https://github.com/withastro/language-tools/tree/main/packages/language-server
+  on_new_config = function(new_config, new_root_dir)
+    if not vim.tbl_get(new_config.init_options, "typescript") or new_config.init_options.typescript.tsdk then
+      return
+    end
 
-`astro-ls` can be installed via `npm`:
-```sh
-npm install -g @astrojs/language-server
-```
-]],
-  },
+    local local_tsdk = vim.fs.joinpath(new_root_dir, "node_modules", "typescript", "lib")
+    if vim.uv.fs_stat(local_tsdk) then
+      new_config.init_options.typescript.tsdk = local_tsdk
+    end
+  end,
 }
