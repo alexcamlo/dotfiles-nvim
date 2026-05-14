@@ -2,10 +2,10 @@
 local keymap = vim.keymap.set
 local cmd = vim.cmd
 
--- Here is a utility function that closes any floating windows when you press escape
+-- Close floating windows when pressing escape.
 local function close_floating()
   for _, win in pairs(vim.api.nvim_list_wins()) do
-    if vim.api.nvim_win_get_config(win).relative == "win" then
+    if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_config(win).relative ~= "" then
       vim.api.nvim_win_close(win, false)
     end
   end
@@ -43,8 +43,8 @@ keymap("n", "<C-k>", ":wincmd k<CR>", { desc = "Move to window above" })
 keymap("n", "<C-l>", ":wincmd l<CR>", { desc = "Move to right window" })
 
 -- Shortcuts for opening explorer in new splits
-keymap("n", "<Leader>v", ":Vex!<CR>", { desc = "Open vertical split explorer on right" })
-keymap("n", "<Leader>s", ":Sex<CR>", { desc = "Open horizontal split explorer above" })
+keymap("n", "<Leader>ev", ":Vex!<CR>", { desc = "Open vertical split explorer on right" })
+keymap("n", "<Leader>es", ":Sex<CR>", { desc = "Open horizontal split explorer above" })
 
 -- Resize with arrows
 keymap("n", "<C-Up>", ":resize +2<CR>", { desc = "Increase window height" })
@@ -57,8 +57,14 @@ keymap("n", "<S-l>", ":bnext<CR>", { desc = "Go to next buffer" })
 keymap("n", "<Tab>", ":bnext<CR>", { desc = "Go to next buffer" })
 keymap("n", "<S-h>", ":bprevious<CR>", { desc = "Go to previous buffer" })
 keymap("n", "<S-Tab>", ":bprevious<CR>", { desc = "Go to previous buffer" })
-keymap("n", "<leader>x", ":Bdelete!<CR>", { desc = "Close current buffer" })
-keymap("n", "<leader>x", ":Bdelete!<CR>", { desc = "Close current buffer" })
+keymap("n", "<leader>x", function()
+  local ok, snacks = pcall(require, "snacks")
+  if ok and snacks.bufdelete then
+    snacks.bufdelete()
+  else
+    vim.cmd.bdelete()
+  end
+end, { desc = "Close current buffer" })
 keymap("n", "<leader>bb", "<c-^><cr>", { desc = "Switch to last buffer" })
 
 -- Keeping the cursor center lined when searching
@@ -100,8 +106,6 @@ keymap("v", ">", ">gv", { desc = "Indent right and maintain selection" })
 -- Moves line shortcuts (∆ = alt+j, ˚ = alt+k)
 keymap("n", "∆", ":m .+1<CR>==", { desc = "Move line down" })
 keymap("n", "˚", ":m .-2<CR>==", { desc = "Move line up" })
-keymap("n", "∆", ":m .+1<CR>==", { desc = "Move line down" })
-keymap("n", "˚", ":m .-2<CR>==", { desc = "Move line up" })
 keymap("i", "∆", "<ESC>:m .+1<CR>==gi", { desc = "Move line down in insert mode" })
 keymap("i", "˚", "<ESC>:m .-2<CR>==gi", { desc = "Move line up in insert mode" })
 keymap("v", "∆", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
@@ -123,65 +127,16 @@ cmd("command! W w") -- Allow W to work like w
 cmd("command! Q q") -- Allow Q to work like q
 cmd("command! WQ wq") -- Allow WQ to work like wq
 
-keymap("c", "w!!", "<esc>:lua require'utils'.sudo_write()<CR>", { silent = true, desc = "Force save with sudo" })
-
--- remove whitespace on save
-cmd([[au BufWritePre * :%s/\s\+$//e]]) -- Remove trailing whitespace on save
+-- Remove trailing whitespace on save.
+vim.api.nvim_create_autocmd("BufWritePre", {
+  group = vim.api.nvim_create_augroup("UserTrimTrailingWhitespace", { clear = true }),
+  pattern = "*",
+  command = [[%s/\s\+$//e]],
+})
 
 keymap(
   "n",
   "<leader>s",
   [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
   { desc = "Search And Replace The Word Under The Cursor" }
-)
-
-vim.api.nvim_create_autocmd(
-  "LspAttach",
-  { --  Use LspAttach autocommand to only map the following keys after the language server attaches to the current buffer
-    group = vim.api.nvim_create_augroup("UserLspConfig", {}),
-    callback = function(ev)
-      -- local client = vim.lsp.get_client_by_id(ev.data.client_id)
-      -- if client:supports_method("textDocument/completion") then
-      --   vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = false })
-      -- end
-      -- vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc" -- Enable completion triggered by <c-x><c-o>
-
-      -- Buffer local mappings.
-      -- See `:help vim.lsp.*` for documentation on any of the below functions
-      local opts = { buffer = ev.buf }
-      -- vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-      vim.keymap.set("n", "K", function()
-        vim.lsp.buf.hover({
-          border = "rounded",
-        })
-      end, opts)
-      vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
-      -- vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, opts)
-      vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-      vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts)
-      vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
-
-      local hover = vim.lsp.buf.hover
-      ---@diagnostic disable-next-line: duplicate-set-field
-      vim.lsp.buf.hover = function()
-        return hover({
-          border = "single",
-          -- max_width = 100,
-          max_width = math.floor(vim.o.columns * 0.7),
-          max_height = math.floor(vim.o.lines * 0.7),
-        })
-      end
-
-      vim.keymap.set("n", "<leader>f", function()
-        vim.lsp.buf.format({ async = true })
-      end, opts)
-
-      -- Open the diagnostic under the cursor in a float window
-      vim.keymap.set("n", "<leader>d", function()
-        vim.diagnostic.open_float({
-          border = "rounded",
-        })
-      end, opts)
-    end,
-  }
 )

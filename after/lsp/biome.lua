@@ -1,38 +1,25 @@
-local util = require 'lspconfig.util'
-
+---@type vim.lsp.Config
 return {
-  default_config = {
-    cmd = { 'biome', 'lsp-proxy' },
-    filetypes = {
-      'astro',
-      'css',
-      'graphql',
-      'javascript',
-      'javascriptreact',
-      'json',
-      'jsonc',
-      'svelte',
-      'typescript',
-      'typescript.tsx',
-      'typescriptreact',
-      'vue',
-    },
-    root_dir = function(fname)
-      local root_files = { 'biome.json', 'biome.jsonc' }
-      root_files = util.insert_package_json(root_files, 'biome', fname)
-      return vim.fs.dirname(vim.fs.find(root_files, { path = fname, upward = true })[1])
-    end,
-    single_file_support = false,
+  cmd = { "biome", "lsp-proxy" },
+  filetypes = {
+    "astro",
+    "css",
+    "graphql",
+    "javascript",
+    "javascriptreact",
+    "json",
+    "jsonc",
+    "svelte",
+    "typescript",
+    "typescriptreact",
+    "vue",
   },
-  docs = {
-    description = [[
-https://biomejs.dev
-
-Toolchain of the web. [Successor of Rome](https://biomejs.dev/blog/annoucing-biome).
-
-```sh
-npm install [-g] @biomejs/biome
-```
-]],
-  },
+  single_file_support = false,
+  root_dir = function(bufnr, on_dir)
+    local fname = vim.api.nvim_buf_get_name(bufnr)
+    local root_file = vim.fs.find({ "biome.json", "biome.jsonc" }, { path = fname, upward = true })[1]
+    if root_file then
+      on_dir(vim.fs.dirname(root_file))
+    end
+  end,
 }

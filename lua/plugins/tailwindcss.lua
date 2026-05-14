@@ -1,12 +1,9 @@
--- tailwind-tools.lua
 return {
-  "luckasRanarison/tailwind-tools.nvim",
-  name = "tailwind-tools",
-  build = ":UpdateRemotePlugins",
-  dependencies = {
-    "nvim-treesitter/nvim-treesitter",
-    -- "nvim-telescope/telescope.nvim", -- optional
-    "neovim/nvim-lspconfig", -- optional
+  -- Disabled for now: tailwind-tools still depends on the deprecated
+  -- nvim-lspconfig setup path. Tailwind LSP itself is configured natively in
+  -- after/lsp/tailwindcss.lua.
+  {
+    "luckasRanarison/tailwind-tools.nvim",
+    enabled = false,
   },
-  opts = {}, -- your configuration
 }

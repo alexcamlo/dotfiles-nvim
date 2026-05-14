@@ -13,6 +13,11 @@ vim.g.skip_ts_context_commentstring_module = true
 opt.showtabline = 1 -- Line above window with file path
 opt.pumheight = 10 -- pop up menu height
 opt.cmdheight = 1 -- more space in the neovim command line for displaying messages
+if vim.fn.has("nvim-0.12") == 1 then
+  pcall(function()
+    require("vim._core.ui2").enable()
+  end)
+end
 opt.conceallevel = 0 -- so that `` is visible in markdown files
 opt.numberwidth = 4 -- set number column width to 2 {default 4}
 opt.showmatch = true -- Show matching parents, brackets, etc.
@@ -97,14 +102,4 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHo
 vim.api.nvim_create_autocmd({ "FileChangedShellPost" }, {
   pattern = "*",
   command = "echohl WarningMsg | echo 'File changed on disk. Buffer reloaded.' | echohl None",
-})
-
--- This is global settings for diagnostics
-vim.o.updatetime = 250
-vim.diagnostic.config({
-  virtual_text = false,
-  signs = true,
-  underline = true,
-  update_in_insert = false,
-  severity_sort = false,
 })

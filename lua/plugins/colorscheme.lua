@@ -246,16 +246,6 @@
 
 return {
   {
-    "thewinger/Base2Tone-nvim",
-    lazy = false,
-    priority = 1000,
-    opts = {},
-    config = function()
-      -- vim.cmd.colorscheme("base2tone_tailwind_dark")
-      -- vim.cmd.colorscheme("default_tailwind")
-    end,
-  },
-  {
     "mistweaverco/vhs-era-theme.nvim",
     config = function()
       vim.cmd("colorscheme vhs-era-theme")
@@ -330,26 +320,6 @@ return {
       vim.api.nvim_set_hl(0, "SignColumn", { bg = "#0f172a" })
       vim.api.nvim_set_hl(0, "Comment", { fg = "#94a3b8" })
       vim.api.nvim_set_hl(0, "@constructor.lua", { fg = "#3ddbd9" })
-    end,
-  },
-  {
-    "projekt0n/github-nvim-theme",
-    name = "github-theme",
-    lazy = false, -- make sure we load this during startup if it is your main colorscheme
-    priority = 1000, -- make sure to load this before all the other start plugins
-    config = function()
-      local palettes = {
-        github_dark_high_contrast = {
-          bg1 = "#0f172a",
-        },
-      }
-      require("github-theme").setup({
-        options = {
-          transparent = true,
-        },
-      })
-
-      -- vim.cmd("colorscheme github_dark_high_contrast")
     end,
   },
 }
