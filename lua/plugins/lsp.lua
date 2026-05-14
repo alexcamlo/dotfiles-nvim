@@ -18,6 +18,8 @@ return {
       },
     },
     config = function()
+      vim.lsp.document_color.enable(false)
+
       vim.diagnostic.config({
         virtual_text = false,
         -- virtual_text = {
@@ -80,6 +82,10 @@ return {
         vim.lsp.enable(server)
         vim.lsp.config(server, capabilities)
       end
+
+      vim.api.nvim_create_user_command("LspInfo", function()
+        vim.cmd("checkhealth vim.lsp")
+      end, { desc = "Show built-in LSP health/info" })
     end,
   },
 }

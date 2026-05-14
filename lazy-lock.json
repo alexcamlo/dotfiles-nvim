@@ -25,7 +25,7 @@
   "mini.icons": { "branch": "main", "commit": "b8f6fa6f5a3fd0c56936252edcd691184e5aac0c" },
   "mini.nvim": { "branch": "main", "commit": "94cae4660a8b2d95dbbd56e1fbc6fcfa2716d152" },
   "nui.nvim": { "branch": "main", "commit": "de740991c12411b663994b2860f1a4fd0937c130" },
-  "nvim-highlight-colors": { "branch": "main", "commit": "b42a5ccec7457b44e89f7ed3b3afb1b375bb2093" },
+  "nvim-highlight-colors": { "branch": "oklch-support", "commit": "ecc23c54f6d826ab83725bb85b0bd9a8afc9b410" },
   "nvim-hlslens": { "branch": "main", "commit": "95ced18ebaf19c1bdb64982a614ee8a9d7ee8e51" },
   "nvim-lint": { "branch": "master", "commit": "7ef127aaede2a4d5ad8df8321e2eb4e567f29594" },
   "nvim-lspconfig": { "branch": "master", "commit": "45ff1914044de7dbd4cd85053dc09f47312a2f4d" },
