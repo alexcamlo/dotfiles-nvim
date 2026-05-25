@@ -32,6 +32,8 @@ vim.g.have_nerd_font = true -- Enable nerd font support
 --   term_mode = "t",
 --   command_mode = "c",
 
+keymap("n", "<Leader>re", "<cmd>restart<cr>", { desc = "Restart Neovim (:restart)" })
+
 keymap("n", ";", ":", { desc = "Map semicolon to colon for easier command mode access" })
 
 keymap("n", "q:", "<nop>", { desc = "Disable command history window" })
