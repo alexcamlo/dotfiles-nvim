@@ -129,11 +129,57 @@ cmd("command! W w") -- Allow W to work like w
 cmd("command! Q q") -- Allow Q to work like q
 cmd("command! WQ wq") -- Allow WQ to work like wq
 
--- Remove trailing whitespace on save.
+-- Remove trailing whitespace on save, but skip filetypes and paths where
+-- trailing whitespace is meaningful (markdown hard breaks, diffs, patches,
+-- vendored or generated files, etc.).
+local skip_trim_filetypes = {
+  ["markdown"] = true,
+  ["diff"] = true,
+  ["gitcommit"] = true,
+  ["gitrebase"] = true,
+  ["git"] = true,
+  ["fugitive"] = true,
+  ["fugitiveblame"] = true,
+  [""] = true, -- unknown filetype
+}
+
+local skip_trim_path_patterns = {
+  "/node_modules/",
+  "/%.git/",
+  "/dist/",
+  "/build/",
+  "/%.next/",
+  "/vendor/",
+  "/generated/",
+  "/_generated/",
+  "%.lock$",
+  "%.min%.%w+$",
+  "/lazy%-lock%.json$",
+  "/package%-lock%.json$",
+  "/yarn%.lock$",
+  "/pnpm%-lock%.yaml$",
+}
+
 vim.api.nvim_create_autocmd("BufWritePre", {
   group = vim.api.nvim_create_augroup("UserTrimTrailingWhitespace", { clear = true }),
   pattern = "*",
-  command = [[%s/\s\+$//e]],
+  callback = function()
+    local ft = vim.bo.filetype
+    if skip_trim_filetypes[ft] then
+      return
+    end
+    local path = vim.api.nvim_buf_get_name(0)
+    if path ~= "" then
+      for _, pat in ipairs(skip_trim_path_patterns) do
+        if path:match(pat) then
+          return
+        end
+      end
+    end
+    local save = vim.fn.winsaveview()
+    pcall(vim.cmd, [[keeppatterns %s/\s\+$//e]])
+    vim.fn.winrestview(save)
+  end,
 })
 
 keymap(

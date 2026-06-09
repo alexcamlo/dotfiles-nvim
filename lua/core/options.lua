@@ -40,7 +40,7 @@ opt.splitright = true -- force all vertical splits to go to the right of current
 opt.showmode = false -- we don't need to see things like -- INSERT -- anymore
 opt.backup = false -- creates a backup file
 opt.writebackup = false -- if a file is being edited by another program (or was written to file while editing with another program), it is not allowed to be edited
-opt.updatetime = 100 -- faster completion (4000ms default)
+opt.updatetime = 500 -- faster completion (4000ms default); 500ms keeps CPU reasonable while staying responsive
 opt.timeoutlen = 1000 -- time to wait for a mapped sequence to complete (in milliseconds)
 opt.swapfile = false -- creates a swapfile
 opt.undofile = true -- enable persistent undo
@@ -92,7 +92,10 @@ vim.cmd([[let &t_Ce = "\e[4:0m"]])
 -- Triger `autoread` when files changes on disk
 -- https://unix.stackexchange.com/questions/149209/refresh-changed-content-of-file-opened-in-vim/383044#383044
 -- https://vi.stackexchange.com/questions/13692/prevent-focusgained-autocmd-running-in-command-line-editing-mode
-vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
+-- Keep this off the high-frequency CursorHold/CursorHoldI events to avoid
+-- running `checktime` on every idle beat.
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "WinEnter" }, {
+  group = vim.api.nvim_create_augroup("UserAutoChecktime", { clear = true }),
   pattern = "*",
   command = "if mode() !~ '\v(c|r.?|!|t)' && getcmdwintype() == '' | checktime | endif",
 })

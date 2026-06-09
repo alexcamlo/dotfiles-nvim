@@ -31,7 +31,7 @@ return {
         return item
       end,
       debug = {
-        scores = true, -- show scores in the list
+        scores = false, -- set to true to inspect picker scoring while tuning
       },
       -- I like the "ivy" layout, so I set it as the default globaly, you can
       -- still override it in different keymaps

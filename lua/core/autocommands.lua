@@ -1,5 +1,6 @@
 -- Remove statusline and tabline when in Alpha
-vim.api.nvim_create_autocmd({ "User" }, {
+vim.api.nvim_create_autocmd("User", {
+  group = vim.api.nvim_create_augroup("UserAlphaStatus", { clear = true }),
   pattern = { "AlphaReady" },
   callback = function()
     vim.cmd([[
@@ -9,7 +10,8 @@ vim.api.nvim_create_autocmd({ "User" }, {
 })
 
 -- Use 'q' to quit from common plugins
-vim.api.nvim_create_autocmd({ "FileType" }, {
+vim.api.nvim_create_autocmd("FileType", {
+  group = vim.api.nvim_create_augroup("UserBufferCloseQ", { clear = true }),
   pattern = { "qf", "help", "man", "lspinfo", "spectre_panel" },
   callback = function()
     vim.cmd([[
@@ -20,7 +22,9 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
 })
 
 -- show cursor line only in active window
+local cursorline_group = vim.api.nvim_create_augroup("UserAutoCursorline", { clear = true })
 vim.api.nvim_create_autocmd({ "InsertLeave", "WinEnter" }, {
+  group = cursorline_group,
   callback = function()
     local ok, cl = pcall(vim.api.nvim_win_get_var, 0, "auto-cursorline")
     if ok and cl then
@@ -30,6 +34,7 @@ vim.api.nvim_create_autocmd({ "InsertLeave", "WinEnter" }, {
   end,
 })
 vim.api.nvim_create_autocmd({ "InsertEnter", "WinLeave" }, {
+  group = cursorline_group,
   callback = function()
     local cl = vim.wo.cursorline
     if cl then
@@ -39,13 +44,15 @@ vim.api.nvim_create_autocmd({ "InsertEnter", "WinLeave" }, {
   end,
 })
 
-vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
+vim.api.nvim_create_autocmd("BufWinEnter", {
+  group = vim.api.nvim_create_augroup("UserFormatOptions", { clear = true }),
   callback = function()
     vim.cmd("set formatoptions-=cro")
   end,
 })
 
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
+  group = vim.api.nvim_create_augroup("UserBaseHighlights", { clear = true }),
   callback = function()
     vim.cmd([[
       hi link illuminatedWord LspReferenceText
@@ -59,8 +66,13 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
 })
 
 -- Stay Centered
--- Stay Centered functions
+-- Off by default to avoid jank. Enable with: vim.g.stay_centered = true
+vim.g.stay_centered = vim.g.stay_centered or false
+
 local function stay_centered_insert()
+  if not vim.g.stay_centered then
+    return
+  end
   local line = vim.fn.line(".")
   local last_line = vim.b.last_line or 0
 
@@ -73,6 +85,9 @@ local function stay_centered_insert()
 end
 
 local function stay_centered()
+  if not vim.g.stay_centered then
+    return
+  end
   local line = vim.fn.line(".")
   local last_line = vim.b.last_line or 0
 
@@ -93,22 +108,24 @@ vim.api.nvim_create_autocmd("CursorMoved", {
   callback = stay_centered,
 })
 
-vim.api.nvim_create_autocmd({ "TextYankPost" }, {
+vim.api.nvim_create_autocmd("TextYankPost", {
+  group = vim.api.nvim_create_augroup("UserYankHighlight", { clear = true }),
   callback = function()
     vim.highlight.on_yank({ higroup = "Visual", timeout = 200 })
   end,
 })
 
--- vim.api.nvim_create_autocmd({ "CursorHold,CursorHoldI" }, {
---	callback = function()
---		vim.diagnostic.open_float(nil, { focus = false, scope = "cursor" })
---	end,
--- })
+-- Diagnostic float on CursorHold.
+-- Off by default to avoid flicker/jank. Enable with: vim.g.diagnostic_float = true
+vim.g.diagnostic_float = vim.g.diagnostic_float or false
 
--- Function to check if a floating dialog exists and if not
-vim.api.nvim_create_autocmd({ "CursorHold" }, {
+vim.api.nvim_create_autocmd("CursorHold", {
+  group = vim.api.nvim_create_augroup("UserDiagnosticFloat", { clear = true }),
   pattern = "*",
   callback = function()
+    if not vim.g.diagnostic_float then
+      return
+    end
     for _, winid in pairs(vim.api.nvim_tabpage_list_wins(0)) do
       if vim.api.nvim_win_get_config(winid).zindex then
         return
@@ -126,9 +143,10 @@ vim.api.nvim_create_autocmd({ "CursorHold" }, {
       },
     })
   end,
-}) -- then check for diagnostics under the cursor
+})
 
 vim.api.nvim_create_autocmd("FileType", {
+  group = vim.api.nvim_create_augroup("UserCsvView", { clear = true }),
   pattern = "csv",
   desc = "Enable CSV View on .csv files",
   callback = function()
