@@ -1,5 +1,6 @@
 local ensure_installed = {
   "json",
+  "toml",
   "javascript",
   "typescript",
   "tsx",
