@@ -26,6 +26,117 @@ return {
         symbol = "│",
       })
 
+      local pick = require("mini.pick")
+      pick.setup({
+        mappings = {
+          choose_in_split = "<C-x>",
+          choose_in_vsplit = "<C-y>",
+        },
+        options = {
+          use_cache = true,
+        },
+        window = {
+          config = function()
+            local height = math.floor(0.5 * vim.o.lines)
+            return {
+              anchor = "SW",
+              border = "single",
+              col = 0,
+              height = height,
+              row = vim.o.lines,
+              width = vim.o.columns,
+            }
+          end,
+        },
+      })
+      require("mini.extra").setup()
+
+      local extra = require("mini.extra")
+
+      local get_visual_selection = function()
+        local _, start_row, start_col = unpack(vim.fn.getpos("v"))
+        local _, end_row, end_col = unpack(vim.fn.getpos("."))
+        if start_row > end_row or (start_row == end_row and start_col > end_col) then
+          start_row, end_row = end_row, start_row
+          start_col, end_col = end_col, start_col
+        end
+
+        local lines = vim.fn.getline(start_row, end_row)
+        if #lines == 0 then
+          return ""
+        end
+
+        lines[#lines] = string.sub(lines[#lines], 1, end_col)
+        lines[1] = string.sub(lines[1], start_col)
+        return table.concat(lines, "\n")
+      end
+
+      local grep_word_or_selection = function()
+        local pattern = vim.fn.expand("<cword>")
+        if vim.fn.mode():match("[vV]") then
+          pattern = get_visual_selection()
+        end
+        pick.builtin.grep({ pattern = pattern, method = "plain" })
+      end
+
+      vim.keymap.set("n", "<leader>ss", function()
+        pick.builtin.files()
+      end, { desc = "Find Files" })
+      vim.keymap.set("n", "<leader>/", function()
+        pick.builtin.grep_live()
+      end, { desc = "Grep" })
+      vim.keymap.set("n", "<leader>cs", function()
+        extra.pickers.colorschemes()
+      end, { desc = "Colorschemes" })
+      vim.keymap.set("n", "<leader>km", function()
+        extra.pickers.keymaps()
+      end, { desc = "Keymaps" })
+      vim.keymap.set({ "n", "x" }, "<leader>sw", grep_word_or_selection, { desc = "Visual selection or word" })
+      vim.keymap.set("n", "<leader>-", function()
+        pick.builtin.resume()
+      end, { desc = "Resume" })
+      vim.keymap.set("n", "<leader>sj", function()
+        extra.pickers.list({ scope = "jump" })
+      end, { desc = "Jumps" })
+      vim.keymap.set("n", "-", function()
+        pick.builtin.files()
+      end, { desc = "Find files" })
+      vim.keymap.set("n", "<leader>pb", function()
+        local wipeout_cur = function()
+          local current = pick.get_picker_matches().current
+          if current and current.bufnr then
+            vim.api.nvim_buf_delete(current.bufnr, {})
+          end
+        end
+        pick.builtin.buffers({ include_current = true }, {
+          mappings = { wipeout = { char = "<C-d>", func = wipeout_cur } },
+        })
+      end, { desc = "Pick buffers" })
+      vim.keymap.set("n", "gd", function()
+        extra.pickers.lsp({ scope = "definition" })
+      end, { desc = "Go to Definition" })
+      vim.keymap.set("n", "gD", function()
+        extra.pickers.lsp({ scope = "declaration" })
+      end, { desc = "Goto Declaration" })
+      vim.keymap.set("n", "gr", function()
+        extra.pickers.lsp({ scope = "references" })
+      end, { desc = "References", nowait = true })
+      vim.keymap.set("n", "gI", function()
+        extra.pickers.lsp({ scope = "implementation" })
+      end, { desc = "Goto Implementation" })
+      vim.keymap.set("n", "gy", function()
+        extra.pickers.lsp({ scope = "type_definition" })
+      end, { desc = "Goto T[y]pe Definition" })
+      vim.keymap.set("n", "<leader>sls", function()
+        extra.pickers.lsp({ scope = "document_symbol" })
+      end, { desc = "LSP Symbols" })
+      vim.keymap.set("n", "<leader>slS", function()
+        extra.pickers.lsp({ scope = "workspace_symbol" })
+      end, { desc = "LSP Workspace Symbols" })
+      vim.keymap.set("n", "<leader>sm", function()
+        extra.pickers.marks()
+      end, { desc = "Marks" })
+
       -- Mini.files clears netrw's FileExplorer augroup when it is used as the
       -- default explorer. Create it first so newer Neovim versions don't emit
       -- `E216: No such group or event: FileExplorer *` during startup.
@@ -94,13 +205,6 @@ return {
           vim.api.nvim_win_set_config(win_id, config)
         end,
       })
-      vim.api.nvim_create_autocmd("User", {
-        pattern = "MiniFilesActionRename",
-        callback = function(event)
-          require("snacks").rename.on_rename_file(event.data.from, event.data.to)
-        end,
-      })
-
       vim.keymap.set("n", "<leader>e", minifiles_toggle, { desc = "Explorer", nowait = true })
       -- vim.keymap.set("n", "<leader>e", function()
       --   mini_files.open(vim.api.nvim_buf_get_name(0), false)
