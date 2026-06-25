@@ -44,10 +44,6 @@ keymap("n", "<C-j>", ":wincmd j<CR>", { desc = "Move to window below" })
 keymap("n", "<C-k>", ":wincmd k<CR>", { desc = "Move to window above" })
 keymap("n", "<C-l>", ":wincmd l<CR>", { desc = "Move to right window" })
 
--- Shortcuts for opening explorer in new splits
-keymap("n", "<Leader>ev", ":Vex!<CR>", { desc = "Open vertical split explorer on right" })
-keymap("n", "<Leader>es", ":Sex<CR>", { desc = "Open horizontal split explorer above" })
-
 -- Resize with arrows
 keymap("n", "<C-Up>", ":resize +2<CR>", { desc = "Increase window height" })
 keymap("n", "<C-Down>", ":resize -2<CR>", { desc = "Decrease window height" })

@@ -117,7 +117,7 @@ return {
           vim.keymap.set("n", "<leader>f", function()
             vim.lsp.buf.format({ async = true })
           end, opts)
-          vim.keymap.set("n", "<leader>e", function()
+          vim.keymap.set("n", "<leader>ce", function()
             vim.diagnostic.open_float({ border = "rounded" })
           end, vim.tbl_extend("force", opts, { desc = "Diagnostic float (line)" }))
         end,

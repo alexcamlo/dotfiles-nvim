@@ -26,7 +26,13 @@ return {
         symbol = "│",
       })
 
-      require("mini.files").setup({
+      -- Mini.files clears netrw's FileExplorer augroup when it is used as the
+      -- default explorer. Create it first so newer Neovim versions don't emit
+      -- `E216: No such group or event: FileExplorer *` during startup.
+      vim.api.nvim_create_augroup("FileExplorer", { clear = false })
+
+      local mini_files = require("mini.files")
+      mini_files.setup({
         mappings = {
           close = "",
           go_in = "L",
@@ -37,8 +43,8 @@ return {
       })
 
       local minifiles_toggle = function(...)
-        if not MiniFiles.close() then
-          MiniFiles.open(...)
+        if not mini_files.close() then
+          mini_files.open(vim.api.nvim_buf_get_name(0), false)
         end
       end
 
@@ -95,13 +101,10 @@ return {
         end,
       })
 
-      vim.keymap.set("n", "<leader>E", minifiles_toggle, { desc = "Explorer" })
-      vim.keymap.set(
-        "n",
-        "<leader>e",
-        ":lua MiniFiles.open(vim.api.nvim_buf_get_name(0), false)<cr>",
-        { desc = "Explorer focused in current files folder" }
-      )
+      vim.keymap.set("n", "<leader>e", minifiles_toggle, { desc = "Explorer", nowait = true })
+      -- vim.keymap.set("n", "<leader>e", function()
+      --   mini_files.open(vim.api.nvim_buf_get_name(0), false)
+      -- end, { desc = "Explorer focused in current files folder", nowait = true })
     end,
   },
 }
