@@ -55,14 +55,7 @@ keymap("n", "<S-l>", ":bnext<CR>", { desc = "Go to next buffer" })
 keymap("n", "<Tab>", ":bnext<CR>", { desc = "Go to next buffer" })
 keymap("n", "<S-h>", ":bprevious<CR>", { desc = "Go to previous buffer" })
 keymap("n", "<S-Tab>", ":bprevious<CR>", { desc = "Go to previous buffer" })
-keymap("n", "<leader>x", function()
-  local ok, snacks = pcall(require, "snacks")
-  if ok and snacks.bufdelete then
-    snacks.bufdelete()
-  else
-    vim.cmd.bdelete()
-  end
-end, { desc = "Close current buffer" })
+keymap("n", "<leader>x", "<cmd>bdelete<cr>", { desc = "Close current buffer" })
 keymap("n", "<leader>bb", "<c-^><cr>", { desc = "Switch to last buffer" })
 
 -- Keeping the cursor center lined when searching
