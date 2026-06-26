@@ -1,5 +1,6 @@
 return {
   "christoomey/vim-tmux-navigator",
+  lazy = false,
   cmd = {
     "TmuxNavigateLeft",
     "TmuxNavigateDown",
@@ -14,4 +15,7 @@ return {
     { "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
     { "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
   },
+  config = function()
+    dofile(vim.fn.expand("~/src/personal/vim-herdr-navigation/editor/nvim.lua"))
+  end,
 }
