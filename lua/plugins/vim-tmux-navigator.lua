@@ -16,10 +16,11 @@ return {
     { "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
   },
   config = function()
-    local herdr_navigation = vim.fn.expand("~/src/personal/vim-herdr-navigation/editor/nvim.lua")
+local herdr_navigation = vim.fn.expand("~/src/personal/vim-herdr-navigation/editor/nvim.lua")
 
     if vim.fn.filereadable(herdr_navigation) == 1 then
       dofile(herdr_navigation)
+    end
     end
   end,
 }
