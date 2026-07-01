@@ -21,6 +21,5 @@ local herdr_navigation = vim.fn.expand("~/src/personal/vim-herdr-navigation/edit
     if vim.fn.filereadable(herdr_navigation) == 1 then
       dofile(herdr_navigation)
     end
-    end
   end,
 }
