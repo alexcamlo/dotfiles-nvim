@@ -22,7 +22,7 @@ lazy.setup({
   spec = {
     { import = "plugins" },
   },
-  install = { colorscheme = { "base2tone_tailwind_dark" } },
+  install = { colorscheme = { "github_dark_default" } },
   -- ui config
   ui = {
     border = "double",
