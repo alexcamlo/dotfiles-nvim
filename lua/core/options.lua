@@ -23,7 +23,7 @@ opt.numberwidth = 4 -- set number column width to 2 {default 4}
 opt.showmatch = true -- Show matching parents, brackets, etc.
 opt.title = true -- Show title in terminal tab
 opt.guifont = "monospace:h17" -- the font used in graphical neovim applications
-opt.guicursor = "n-c-sm:block,i-ci-ve:ver25,v-r-cr-o:hor20"
+opt.guicursor = "n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20,t:ver25-blinkon500-blinkoff500-TermCursor"
 opt.laststatus = 3 -- something for avante
 
 -- Files and Others
