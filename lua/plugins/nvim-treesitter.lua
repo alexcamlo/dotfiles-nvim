@@ -27,7 +27,6 @@ return {
       vim.cmd.TSUpdate()
     end,
     dependencies = {
-      "windwp/nvim-ts-autotag",
       "JoosepAlviste/nvim-ts-context-commentstring",
     },
     config = function()
@@ -46,8 +45,6 @@ return {
           vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
         end,
       })
-
-      require("nvim-ts-autotag").setup()
 
       require("ts_context_commentstring").setup({
         enable_autocmd = false,
