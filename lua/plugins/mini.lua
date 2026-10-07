@@ -114,7 +114,21 @@ return {
         })
       end, { desc = "Pick buffers" })
       vim.keymap.set("n", "gd", function()
-        extra.pickers.lsp({ scope = "definition" })
+        vim.lsp.buf.definition({
+          on_list = function(data)
+            local items = data.items
+            for _, item in ipairs(items) do
+              item.path = item.filename
+              item.text = string.format("%s:%d:%d", item.filename, item.lnum, item.col)
+            end
+
+            if #items == 1 then
+              pick.default_choose(items[1])
+            else
+              pick.start({ source = { name = "Definitions", items = items } })
+            end
+          end,
+        })
       end, { desc = "Go to Definition" })
       vim.keymap.set("n", "gD", function()
         extra.pickers.lsp({ scope = "declaration" })
