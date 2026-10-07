@@ -31,6 +31,7 @@ return {
         mappings = {
           choose_in_split = "<C-x>",
           choose_in_vsplit = "<C-y>",
+          mark = "<M-x>",
         },
         options = {
           use_cache = true,

@@ -6,14 +6,28 @@ return {
   init_options = {
     typescript = {},
   },
-  on_new_config = function(new_config, new_root_dir)
-    if not vim.tbl_get(new_config.init_options, "typescript") or new_config.init_options.typescript.tsdk then
+  before_init = function(_, config)
+    if config.init_options.typescript.tsdk then
       return
     end
 
-    local local_tsdk = vim.fs.joinpath(new_root_dir, "node_modules", "typescript", "lib")
-    if vim.uv.fs_stat(local_tsdk) then
-      new_config.init_options.typescript.tsdk = local_tsdk
-    end
+    local ts_file = vim.fs.find("node_modules/typescript/lib/typescript.js", {
+      path = config.root_dir,
+      upward = true,
+      type = "file",
+    })[1]
+    config.init_options.typescript.tsdk = ts_file and vim.fs.dirname(ts_file)
+      or vim.fs.joinpath(
+        vim.fn.stdpath("data"),
+        "mason",
+        "packages",
+        "vtsls",
+        "node_modules",
+        "@vtsls",
+        "language-server",
+        "node_modules",
+        "typescript",
+        "lib"
+      )
   end,
 }
