@@ -68,12 +68,12 @@ return {
       --   diffInlineDelete = "#ff6666"),
       -- }
 
-      -- vim.api.nvim_set_hl(0, "@lsp.type.variable", { fg = "#be95ff" })
-      -- vim.api.nvim_set_hl(0, "string", { fg = "#f2f4f8" })
-      -- vim.api.nvim_set_hl(0, "Normal", { bg = "#0f172a" })
-      -- vim.api.nvim_set_hl(0, "SignColumn", { bg = "#0f172a" })
-      -- vim.api.nvim_set_hl(0, "Comment", { fg = "#94a3b8" })
-      -- vim.api.nvim_set_hl(0, "@constructor.lua", { fg = "#3ddbd9" })
+      vim.api.nvim_set_hl(0, "@lsp.type.variable", { fg = "#be95ff" })
+      vim.api.nvim_set_hl(0, "string", { fg = "#f2f4f8" })
+      vim.api.nvim_set_hl(0, "Normal", { bg = "#0f172a" })
+      vim.api.nvim_set_hl(0, "SignColumn", { bg = "#0f172a" })
+      vim.api.nvim_set_hl(0, "Comment", { fg = "#94a3b8" })
+      vim.api.nvim_set_hl(0, "@constructor.lua", { fg = "#3ddbd9" })
     end,
   },
   {

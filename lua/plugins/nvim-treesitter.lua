@@ -1,4 +1,5 @@
 local ensure_installed = {
+  "astro",
   "json",
   "toml",
   "javascript",
