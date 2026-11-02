@@ -1,5 +1,17 @@
 return {
   {
+    dir = "~/.config/nvim/colors/tailwindcss-theme.nvim",
+    name = "tailwindcss-theme",
+    priority = 1000,
+    config = function()
+      require("tailwindcss-theme").setup({
+        transparent = true, -- editor.background es transparente en el tema original
+        -- italic_comments = true, -- los comentarios van en italica en tailwindcss.com
+      })
+      vim.cmd.colorscheme("tailwindcss-theme")
+    end,
+  },
+  {
     "mistweaverco/vhs-era-theme.nvim",
     config = function()
       -- vim.cmd("colorscheme vhs-era-theme")
@@ -68,12 +80,12 @@ return {
       --   diffInlineDelete = "#ff6666"),
       -- }
 
-      vim.api.nvim_set_hl(0, "@lsp.type.variable", { fg = "#be95ff" })
-      vim.api.nvim_set_hl(0, "string", { fg = "#f2f4f8" })
-      vim.api.nvim_set_hl(0, "Normal", { bg = "#0f172a" })
-      vim.api.nvim_set_hl(0, "SignColumn", { bg = "#0f172a" })
-      vim.api.nvim_set_hl(0, "Comment", { fg = "#94a3b8" })
-      vim.api.nvim_set_hl(0, "@constructor.lua", { fg = "#3ddbd9" })
+      -- vim.api.nvim_set_hl(0, "@lsp.type.variable", { fg = "#be95ff" })
+      -- vim.api.nvim_set_hl(0, "string", { fg = "#f2f4f8" })
+      -- vim.api.nvim_set_hl(0, "Normal", { bg = "#0f172a" })
+      -- vim.api.nvim_set_hl(0, "SignColumn", { bg = "#0f172a" })
+      -- vim.api.nvim_set_hl(0, "Comment", { fg = "#94a3b8" })
+      -- vim.api.nvim_set_hl(0, "@constructor.lua", { fg = "#3ddbd9" })
     end,
   },
   {
@@ -86,7 +98,7 @@ return {
         -- ...
       })
 
-      vim.cmd("colorscheme github_dark_default")
+      -- vim.cmd("colorscheme github_dark_default")
     end,
   },
 }
