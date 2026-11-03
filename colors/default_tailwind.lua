@@ -235,7 +235,8 @@ hi('@function.macro',   { link='Macro' })
 hi('@parameter',        { link='Identifier' })
 hi('@method',           { link='Function' })
 hi('@field',            { link='Identifier' })
-hi('@property',         { link='Identifier' })
+-- hi('@property',         { link='Identifier' })
+hi('@property',         { fg=fg.blue, bg=nil })
 hi('@constructor',      { link='Special' })
 
 -- - Keywords
